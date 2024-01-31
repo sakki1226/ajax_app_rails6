@@ -1,3 +1,17 @@
+const buildHTML = (XHR) => {
+  const item = XHR.response.post;
+  const html = `
+    <div class="post">
+      <div class="post-date">
+        投稿日時：${item.created_at}
+      </div>
+      <div class="post-content">
+        ${item.content}
+      </div>
+    </div>`;
+  return html;
+};
+
 function post() {
   const form = document.getElementById("form");
   form.addEventListener("submit", (e) => {
@@ -22,7 +36,17 @@ function post() {
     });
 
     XHR.send(formData);
+    XHR.onload = () => {
+      if (XHR.status != 200){
+        alert(`Error ${XHR.status}: ${XHR.statusText}`);
+        return null;
+      };
+      const list = document.getElementById("list");
+      const formText = document.getElementById("content");
+      list.insertAdjacentElement("afterend", build(XHR));
+      formText.value = "";
+    };
   });
-}
+};
 
 window.addEventListener('turbo:load', post);
